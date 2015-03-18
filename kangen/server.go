@@ -32,8 +32,7 @@ func (h *regexpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func kangenHandler(w http.ResponseWriter, r *http.Request) {
 	shorten := strings.TrimLeft(r.URL.Path, "/")
-	conn := connectRedis()
-	url := getURL(conn, shorten)
+	url := Get(shorten)
 
 	if url == "" {
 		http.NotFound(w, r)
