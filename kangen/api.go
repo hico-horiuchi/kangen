@@ -85,7 +85,11 @@ func List() string {
 		checkError(err)
 
 		redis.ScanStruct(reply, &k)
-		result = append(result, fmt.Sprintf("%s -> %s\n", k.Shorten, k.URL)...)
+		if expire := getExpire(k.Shorten); expire == "" {
+			result = append(result, fmt.Sprintf("%s -> %s\n", k.Shorten, k.URL)...)
+		} else {
+			result = append(result, fmt.Sprintf("%s -> %s (%s)\n", k.Shorten, k.URL, expire)...)
+		}
 	}
 
 	return string(result)
