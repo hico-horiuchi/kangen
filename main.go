@@ -10,7 +10,10 @@ import (
 var version string
 
 func main() {
-	var port int
+	var (
+		expire string
+		port   int
+	)
 
 	rootCmd := &cobra.Command{
 		Use:   "kangen",
@@ -18,17 +21,19 @@ func main() {
 		Long:  "URL shortening tool by golang\nhttps://github.com/hico-horiuchi/kangen",
 	}
 
-	rootCmd.AddCommand(&cobra.Command{
+	addCmd := &cobra.Command{
 		Use:   "add [shorten] [url]",
 		Short: "Add shorten URL",
 		Long:  "Add shorten URL",
 		Run: func(cmd *cobra.Command, args []string) {
 			switch len(args) {
 			case 2:
-				fmt.Print(kangen.Add(args[0], args[1]))
+				fmt.Print(kangen.Add(args[0], args[1], expire))
 			}
 		},
-	})
+	}
+	addCmd.Flags().StringVarP(&expire, "expire", "e", "", "Set timeout of shorten like 15m, 1h, 1d")
+	rootCmd.AddCommand(addCmd)
 
 	rootCmd.AddCommand(&cobra.Command{
 		Use:   "remove [shorten]",

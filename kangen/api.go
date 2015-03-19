@@ -30,7 +30,7 @@ func Get(shorten string) string {
 	return k.URL
 }
 
-func Add(shorten string, url string) string {
+func Add(shorten string, url string, expire string) string {
 	conn := connectRedis()
 	defer conn.Close()
 
@@ -43,8 +43,9 @@ func Add(shorten string, url string) string {
 		URL:     url,
 	}
 
-	_, err := conn.Do("HMSET", redis.Args{}.Add("kagen:"+shorten).AddFlat(&k)...)
+	_, err := conn.Do("HMSET", redis.Args{}.Add("kangen:"+shorten).AddFlat(&k)...)
 	checkError(err)
+	setExpire(shorten, expire)
 
 	return fmt.Sprintf("[ADD] %s -> %s\n", shorten, url)
 }
@@ -58,7 +59,7 @@ func Remove(shorten string) string {
 	}
 	url := Get(shorten)
 
-	_, err := conn.Do("HDEL", "kangen:"+shorten)
+	_, err := conn.Do("DEL", "kangen:"+shorten)
 	checkError(err)
 
 	return fmt.Sprintf("[REMOVE] %s -> %s\n", shorten, url)

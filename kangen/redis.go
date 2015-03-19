@@ -2,7 +2,6 @@ package kangen
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"log"
 )
 
 type kangenStruct struct {
@@ -17,8 +16,15 @@ func connectRedis() redis.Conn {
 	return conn
 }
 
-func checkError(err error) {
-	if err != nil {
-		log.Fatalln(err)
+func setExpire(shorten string, expire string) {
+	seconds := stoe(expire)
+	if seconds == -1 {
+		return
 	}
+
+	conn := connectRedis()
+	defer conn.Close()
+
+	_, err := conn.Do("EXPIRE", "kangen:"+shorten, seconds)
+	checkError(err)
 }
