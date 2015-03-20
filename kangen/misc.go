@@ -2,7 +2,7 @@ package kangen
 
 import (
 	"fmt"
-	"log"
+	"os"
 	"regexp"
 	"strconv"
 	"time"
@@ -10,7 +10,8 @@ import (
 
 func checkError(err error) {
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 
